@@ -1,0 +1,23 @@
+image: node:latest
+
+stages:
+  - build
+  - test
+cache:
+  paths:
+    - node_modules/
+
+build:
+  stage: build
+  tags:
+    - docker
+  script:
+    - npm install
+
+test:
+  stage: test
+  tags:
+    - docker
+  script:
+    - echo "----- Test Running -----"
+
