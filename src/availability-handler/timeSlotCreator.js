@@ -1,32 +1,33 @@
 const Variables = require("../config/variables");
+const {StorageController} = require("./storageController");
 
 class TimeSlotCreator {
     constructor() {
     }
 
-    createTimeslot(clinics, j, day) {
+    createTimeslot(clinic, day) {
         const timeArray = []
 
         //get openinghours depending on day
         if (day === Variables.MONDAY) {
-            var start = clinics[j].openinghours.monday.split('-')[0]
-            var close = clinics[j].openinghours.monday.split('-')[1]
+            var start = clinic.openinghours.monday.split('-')[0]
+            var close = clinic.openinghours.monday.split('-')[1]
         }
         if (day === Variables.TUESDAY) {
-            var start = clinics[j].openinghours.tuesday.split('-')[0]
-            var close = clinics[j].openinghours.tuesday.split('-')[1]
+            var start = clinic.openinghours.tuesday.split('-')[0]
+            var close = clinic.openinghours.tuesday.split('-')[1]
         }
         if (day === Variables.WEDNESDAY) {
-            var start = clinics[j].openinghours.wednesday.split('-')[0]
-            var close = clinics[j].openinghours.wednesday.split('-')[1]
+            var start = clinic.openinghours.wednesday.split('-')[0]
+            var close = clinic.openinghours.wednesday.split('-')[1]
         }
         if (day === Variables.THURSDAY) {
-            var start = clinics[j].openinghours.thursday.split('-')[0]
-            var close = clinics[j].openinghours.thursday.split('-')[1]
+            var start = clinic.openinghours.thursday.split('-')[0]
+            var close = clinic.openinghours.thursday.split('-')[1]
         }
         if (day === Variables.FRIDAY) {
-            var start = clinics[j].openinghours.friday.split('-')[0]
-            var close = clinics[j].openinghours.friday.split('-')[1]
+            var start = clinic.openinghours.friday.split('-')[0]
+            var close = clinic.openinghours.friday.split('-')[1]
         }
 
         //parse hour and minutes for opening
@@ -49,7 +50,7 @@ class TimeSlotCreator {
 
             for (var i=0; i<timeSlots; i++){
                 if(i === 0) {
-                    timeArray.push({[startHour + ':' + tempMinute + ' - ' + (startHour) + ':' + (parseInt(tempMinute+30))]: clinics[j].dentists})
+                    timeArray.push({[startHour + ':' + tempMinute + ' - ' + (startHour) + ':' + (parseInt(tempMinute+30))]: clinic.dentists})
                 } else {
                     tempMinute = parseInt(tempMinute) + 30
         //check if hour needs to be added
@@ -66,7 +67,7 @@ class TimeSlotCreator {
                         endHour += 1
                     }
         //push the timeslot for every iteration to the array, with the amount of dentists the clinic has
-                    timeArray.push({[tempHour + ':' + tempMinute + ' - ' + endHour + ':' +endMinute]: clinics[j].dentists})
+                    timeArray.push({[tempHour + ':' + tempMinute + ' - ' + endHour + ':' +endMinute]: clinic.dentists})
                 }
             }
         return timeArray;
@@ -74,32 +75,30 @@ class TimeSlotCreator {
     }
 
     populateAvailability(message) {
-        const clinics = JSON.parse(message).dentists
-        //console.log(clinics)
-        for (var i = 0; i < clinics.length; i++ ) {
-            //add availability Array to each clinic
-            clinics[i].availability = []
+        const clinic = message
+        const storageController = new StorageController()
 
-            var dateObj = new Date(Date.now())
+        clinic.availability = []
 
-            for(var j = 0; j<365; j++) {
+        var dateObj = new Date(Date.now())
 
-                var repeatDate = dateObj.setDate(dateObj.getDate() + 1)
-                var repeats = new Date(repeatDate)
+        for(var j = 0; j<365; j++) {
 
-                var dateString = repeats.toLocaleString("sv-SE")
-                var date = dateString.split(' ')[0]
+            var repeatDate = dateObj.setDate(dateObj.getDate() + 1)
+            var repeats = new Date(repeatDate)
 
-                var day = repeats.getDay()
+            var dateString = repeats.toLocaleString("sv-SE")
+            var date = dateString.split(' ')[0]
 
-                //check if day is saturday or sunday
-                if(day != 6 && day != 0) {
-                    clinics[i].availability.push({[date]: this.createTimeslot(clinics, i, day)})
-                }
+            var day = repeats.getDay()
+
+            //check if day is saturday or sunday
+            if(day != 6 && day != 0) {
+                clinic.availability.push({[date]: this.createTimeslot(clinic, day)})
             }
         }
-        return clinics
-         // console.log(JSON.stringify(clinics,null, " "))
+        //console.log(JSON.stringify(clinic,null, " "))
+        storageController.saveClinic(clinic)
     }
 
 }
