@@ -352,4 +352,7 @@ dist
 # CodeStream plugin
 # https://plugins.jetbrains.com/plugin/12206-codestream
 
+# availability FIles
+availability-data
+
 # End of https://www.toptal.com/developers/gitignore/api/node,webstorm,jetbrains,intellij
