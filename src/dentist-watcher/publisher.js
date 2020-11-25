@@ -5,7 +5,7 @@ const variables = require("../config/variables")
 class Publisher {
     constructor() {
     }
-    publishToBroker(file) {
+    publishTimeSlots(file) {
 
         fs.readFile(file, (err, data) => {
 
