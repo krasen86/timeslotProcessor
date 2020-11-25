@@ -11,8 +11,11 @@ class Publisher {
 
             const clinic = data.toString('utf-8');
             let clinicId = JSON.parse(clinic).id;
+            let availability = JSON.parse(clinic).availability
 
-            MQTT.publish(variables.AVAILABILITY_TOPIC + "/" + clinicId, clinic, {retain:true});
+            console.log(JSON.parse(clinic).id)
+
+            MQTT.publish(variables.AVAILABILITY_TOPIC + "/" + clinicId, JSON.stringify(availability), {retain:true});
         })
     }
 }
