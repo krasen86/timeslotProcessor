@@ -7,7 +7,7 @@ class Watcher {
     watch(file) {
         fs.watchFile(file, () => {
             let publisher = new Publisher();
-            publisher.publishToBroker(file);
+            publisher.publishTimeSlots(file);
         })
     }
 }
