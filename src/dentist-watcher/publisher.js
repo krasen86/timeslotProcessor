@@ -10,8 +10,7 @@ class Publisher {
         fs.readFile(file, (err, data) => {
 
             const clinic = data.toString('utf-8');
-            let clinicId = clinic.id;
-            console.log(JSON.parse(clinic));
+            let clinicId = JSON.parse(clinic).id;
 
             MQTT.publish(variables.AVAILABILITY_TOPIC + "/" + clinicId, clinic, {retain:true});
         })
