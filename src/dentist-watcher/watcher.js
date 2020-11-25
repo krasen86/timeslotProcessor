@@ -4,10 +4,10 @@ const fs = require("fs");
 class Watcher {
     constructor() {
     }
-    watch() {
-        fs.watchFile('./dentist-data/dentists.json', () => {
+    watch(file) {
+        fs.watchFile('../availability-data/' + file, () => {
             let publisher = new Publisher();
-            publisher.publishToBroker();
+            publisher.publishToBroker(file);
         })
     }
 }
