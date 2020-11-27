@@ -87,8 +87,7 @@ class TimeSlotCreator {
             var repeatDate = dateObj.setDate(dateObj.getDate() + 1)
             var repeats = new Date(repeatDate)
 
-            var dateString = repeats.toLocaleString("sv-SE")
-            var date = dateString.split(' ')[0]
+            var date = repeats.toISOString().split('T')[0]
 
             var day = repeats.getDay()
 
