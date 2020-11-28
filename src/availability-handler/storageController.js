@@ -1,6 +1,6 @@
 const fs = require("fs");
-const {Publisher} = require( "../dentist-watcher/publisher");
-const {Watcher} = require( "../dentist-watcher/watcher");
+const {Publisher} = require( "../services/publisher");
+const {Watcher} = require( "../services/watcher");
 
 
 class StorageController {

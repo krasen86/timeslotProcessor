@@ -1,7 +1,7 @@
-const {MQTT} = require("./dentist-watcher/mqttConnector");
-const {Subscriber} = require("./dentist-watcher/subscriber");
+const {MQTT} = require("./services/mqttConnector");
+const {Subscriber} = require("./services/subscriber");
 const variables = require("./config/variables");
-const {BrokerListener} = require("./dentist-watcher/brokerListener");
+const {BrokerListener} = require("./services/brokerListener");
 
 
 MQTT.on('connect', function () {
