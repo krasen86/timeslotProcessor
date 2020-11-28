@@ -5,9 +5,9 @@ class Watcher {
     constructor() {
     }
     watch(file) {
-        fs.watchFile('../availability-data/' + file, () => {
+        fs.watchFile(file, () => {
             let publisher = new Publisher();
-            publisher.publishToBroker(file);
+            publisher.publishTimeSlots(file);
         })
     }
 }
