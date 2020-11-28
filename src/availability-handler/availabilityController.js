@@ -1,6 +1,4 @@
-const Variables = require("../config/variables");
-const {TimeSlotCreator} = require("./timeSlotCreator");
-const {StorageController} = require("./storageController");
+const {ChangeController} = require("./changeController");
 
 
 class AvailabilityController {
@@ -8,11 +6,10 @@ class AvailabilityController {
     }
     processMessage(message) {
         const buffer = message.toString('utf-8');
-        const timeSlotCreator = new TimeSlotCreator();
-        const storageController = new StorageController();
 
-        const populatedClinics = timeSlotCreator.populateAvailability(buffer);
-        storageController.storeClinics(populatedClinics);
+        const changeController = new ChangeController();
+
+        changeController.checkChange(buffer)
     }
 }
 module.exports.AvailabilityController = AvailabilityController
