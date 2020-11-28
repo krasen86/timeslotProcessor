@@ -1,4 +1,4 @@
-const {Publisher} = require( ".//publisher");
+const {Publisher} = require( "./publisher");
 const fs = require("fs");
 
 class Watcher {
