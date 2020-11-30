@@ -18,6 +18,9 @@ class Publisher {
             MQTT.publish(variables.AVAILABILITY_TOPIC + "/" + clinicId, JSON.stringify(availability), {retain:true});
         })
     }
+    publishBookingConfirmation(booking) {
+        MQTT.publish(variables.BOOKING_RESPONSE_TOPIC, JSON.stringify(booking), {retain:true})
+    }
 }
 module.exports.Publisher = Publisher;
 
