@@ -7,13 +7,6 @@ class StorageController {
     constructor() {
     }
 
-    storeClinics(document) {
-        for (var i = 0 ; i < document.length ; i++) {
-            var clinic = document[i];
-            this.saveClinic(clinic)
-        }
-    }
-
     saveClinic(clinic) {
         var dir = './availability-data'
         let publisher = new Publisher();
@@ -26,6 +19,14 @@ class StorageController {
         fs.writeFileSync(fileName, JSON.stringify(clinic));
         publisher.publishTimeSlots(fileName);
         watcher.watch(fileName);
+    }
+
+    saveAvailability(availability, id) {
+        const publish = new Publisher();
+        let fileName = './availability-data/availability-' + id +'.json'
+
+        fs.writeFileSync(fileName, JSON.stringify(availability));
+        publish.publishTimeSlots(fileName)
     }
 }
 module.exports.StorageController = StorageController

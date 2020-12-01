@@ -1,17 +1,19 @@
-const {TimeSlotFinder} = require("./timeSlotFinder")
 const {TimeSlotController} = require("./timeSlotController")
+const {Publisher} = require ("../services/publisher")
 
 class BookingController {
     constructor() {
     }
     processMessage(message) {
-        const timeSlotFinder = new TimeSlotFinder();
         const timeSlotController = new TimeSlotController();
+        const publisher = new Publisher();
 
         async function timeSlotAvailable() {
-            console.log('\nbefore checking for availability');
-            const result = await timeSlotFinder.checkAvailability(message);
-            console.log(result);
+            const result = await timeSlotController.checkAvailability(message);
+            if(result.available === true) {
+                timeSlotController.takeTimeSlot(result)
+            }
+            publisher.publishBookingConfirmation(result)
         }
 
         timeSlotAvailable();
