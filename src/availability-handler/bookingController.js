@@ -8,15 +8,13 @@ class BookingController {
         const timeSlotFinder = new TimeSlotFinder();
         const timeSlotController = new TimeSlotController();
 
-        const promise = new Promise ((resolve, reject) => {
-            resolve(timeSlotFinder.checkAvailability(message))
-        })
-        setTimeout(() =>
-        {
-            promise.then((value) => {
-                console.log(value)
-            })
-        })
+        async function timeSlotAvailable() {
+            console.log('\nbefore checking for availability');
+            const result = await timeSlotFinder.checkAvailability(message);
+            console.log(result);
+        }
+
+        timeSlotAvailable();
 
     }
 }
