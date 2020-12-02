@@ -8,6 +8,7 @@ MQTT.on('connect', function () {
    let subscriber = new Subscriber();
    subscriber.connectToBroker();
    subscriber.subscribeToTopic(variables.DENTIST_TOPIC);
+   subscriber.subscribeToTopic(variables.BOOKING_TOPIC)
    let listener = new BrokerListener();
    listener.listenForMessage();
 })
