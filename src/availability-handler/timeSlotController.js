@@ -18,7 +18,7 @@ class TimeSlotController {
                 let i = 0;
                 let date = "";
 
-                while (flag === false) {
+                while (!flag) {
                     if(availability.availability[i] === undefined) {
                         break;
                     }
@@ -29,7 +29,7 @@ class TimeSlotController {
                         i++
                     }
                 }
-                if(flag === true) {
+                if(flag) {
 
                     for (let j = 0; j < date[bookingDate].length; j++) {
                         var hour = (Object.keys(date[bookingDate][j])[0]).split(" -")[0]
@@ -50,7 +50,7 @@ class TimeSlotController {
                         }
                     }
                 }
-                if(flag === false) {
+                if(!flag) {
                     booking.available = false;
                 }
                 resolve(booking)
