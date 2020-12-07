@@ -22,11 +22,11 @@ class StorageController {
     }
 
     saveAvailability(availability, id) {
-        const publish = new Publisher();
         let fileName = './availability-data/availability-' + id +'.json'
 
-        fs.writeFileSync(fileName, JSON.stringify(availability));
-        publish.publishTimeSlots(fileName)
+        fs.readFile(fileName, () => {
+            fs.writeFileSync(fileName, JSON.stringify(availability));
+        })
     }
 }
 module.exports.StorageController = StorageController
