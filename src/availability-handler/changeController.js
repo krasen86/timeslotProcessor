@@ -1,4 +1,5 @@
 const fs = require("fs");
+const {Watcher} = require("../services/watcher");
 const {Publisher} = require("../services/publisher");
 const {TimeSlotCreator} = require("./timeSlotCreator");
 
@@ -9,14 +10,15 @@ class ChangeController {
         const dentists = JSON.parse(message).dentists
         const timeSlotCreator = new TimeSlotCreator()
         const publisher = new Publisher()
+        const watcher = new Watcher()
 
         for(let i=1; i<=dentists.length; i++){
             let fileName = './availability-data/availability-' + dentists[i-1].id +'.json'
             try {
                 if (fs.existsSync(fileName)) {
                     this.checkDentistCount(dentists[i-1], fileName)
-                    console.log(fileName)
                     publisher.publishTimeSlots(fileName)
+                    watcher.watch(fileName)
                 } else {
                     timeSlotCreator.populateAvailability(dentists[i-1])
                 }
@@ -37,10 +39,8 @@ class ChangeController {
                         let timeSlotKey = Object.keys(existingDentists.availability[i][dateKey][j])[0]
                         if(difference < 0){
                             existingDentists.availability[i][dateKey][j][timeSlotKey] -= Math.abs(difference)
-                            console.log("It works -")
                         }else {
                             existingDentists.availability[i][dateKey][j][timeSlotKey] += difference
-                            console.log("It works +")
                         }
                     }
                 }
