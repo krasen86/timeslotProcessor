@@ -15,6 +15,7 @@ class ChangeController {
             try {
                 if (fs.existsSync(fileName)) {
                     this.checkDentistCount(dentists[i-1], fileName)
+                    this.checkDentistOpeningHours(dentists[i-1], fileName)
                     console.log(fileName)
                     publisher.publishTimeSlots(fileName)
                 } else {
@@ -45,8 +46,20 @@ class ChangeController {
                     }
                 }
             }
-
             fs.writeFileSync(fileName, JSON.stringify(existingDentists));
+        })
+    }
+    checkDentistOpeningHours(dentist, fileName) {
+        const timeSlotCreator = new TimeSlotCreator();
+        fs.readFile(fileName, (err, data) => {
+            let existingDentist = JSON.parse(data);
+
+            for(let day in existingDentist.openinghours) {
+                if(dentist.openinghours[day] !== existingDentist.openinghours[day]){
+                    let newHours = dentist.openinghours[day]
+                    timeSlotCreator.updateTimeslots(existingDentist, day, newHours)
+                }
+            }
         })
 
     }
