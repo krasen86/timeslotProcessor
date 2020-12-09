@@ -1,7 +1,7 @@
 const fs = require("fs");
+const {Watcher} = require("../services/watcher");
 const {Publisher} = require("../services/publisher");
 const {TimeSlotCreator} = require("./timeSlotCreator");
-const {Watcher} = require("../services/watcher")
 
 class ChangeController {
     constructor() {
