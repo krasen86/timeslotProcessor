@@ -1,6 +1,7 @@
 const fs = require("fs");
 const {Publisher} = require("../services/publisher");
 const {TimeSlotCreator} = require("./timeSlotCreator");
+const {Watcher} = require("../services/watcher")
 
 class ChangeController {
     constructor() {
@@ -9,6 +10,7 @@ class ChangeController {
         const dentists = JSON.parse(message).dentists
         const timeSlotCreator = new TimeSlotCreator()
         const publisher = new Publisher()
+        const watcher = new Watcher()
 
         for(let i=1; i<=dentists.length; i++){
             let fileName = './availability-data/availability-' + dentists[i-1].id +'.json'
@@ -18,6 +20,7 @@ class ChangeController {
                     this.checkDentistOpeningHours(dentists[i-1], fileName)
                     console.log(fileName)
                     publisher.publishTimeSlots(fileName)
+                    watcher.watch(fileName)
                 } else {
                     timeSlotCreator.populateAvailability(dentists[i-1])
                 }
@@ -38,10 +41,8 @@ class ChangeController {
                         let timeSlotKey = Object.keys(existingDentists.availability[i][dateKey][j])[0]
                         if(difference < 0){
                             existingDentists.availability[i][dateKey][j][timeSlotKey] -= Math.abs(difference)
-                            console.log("It works -")
                         }else {
                             existingDentists.availability[i][dateKey][j][timeSlotKey] += difference
-                            console.log("It works +")
                         }
                     }
                 }
@@ -52,16 +53,14 @@ class ChangeController {
     checkDentistOpeningHours(dentist, fileName) {
         const timeSlotCreator = new TimeSlotCreator();
         fs.readFile(fileName, (err, data) => {
-            let existingDentist = JSON.parse(data);
+            let oldDentist = JSON.parse(data);
 
-            for(let day in existingDentist.openinghours) {
-                if(dentist.openinghours[day] !== existingDentist.openinghours[day]){
-                    let newHours = dentist.openinghours[day]
-                    timeSlotCreator.updateTimeslots(existingDentist, day, newHours)
+            for(let day in oldDentist.openinghours) {
+                if(dentist.openinghours[day] !== oldDentist.openinghours[day]){
+                    timeSlotCreator.updateTimeslots(oldDentist, day, dentist)
                 }
             }
         })
-
     }
 }
 module.exports.ChangeController = ChangeController

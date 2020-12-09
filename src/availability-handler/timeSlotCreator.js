@@ -101,19 +101,8 @@ class TimeSlotCreator {
     }
 
     updateTimeslots(dentist, day, newHours) {
+        const storageController = new StorageController();
 
-        let oldClosingTime = dentist.openinghours[day].split("-")[1]
-        let newClosingTime = newHours.split("-")[1]
-
-        let oldClosingTimeHour = parseInt(oldClosingTime.split(":")[0])
-        let newClosingTimeHour = parseInt(newClosingTime.split(":")[0])
-
-        let oldClosingTimeMinute = oldClosingTime.split(":")[1]
-
-        let timeslots = (newClosingTimeHour - oldClosingTimeHour) * 2
-        //console.log(oldClosingTime + " - " + newClosingTime)
-
-        //console.log(newClosingTime)
         for(let i = 0; i<dentist.availability.length; i++) {
 
             let date = Object.keys(dentist.availability[i])[0]
@@ -121,41 +110,20 @@ class TimeSlotCreator {
             dateObj = new Date(dateObj)
 
             if (dateObj.toLocaleString('en-us', {weekday: 'long'}).toLowerCase() === day) {
-                let tempHour = oldClosingTimeHour;
-                let tempMinute = oldClosingTimeMinute;
-                let timeObject = "";
-                for(let j = 0; j<timeslots; j++){
-                    if(j === 0){
-                        if(tempMinute === "00") {
-                            timeObject = {[tempHour + ":" + tempMinute + " - " + tempHour + ":" + (parseInt(tempMinute + 30))]: dentist.dentists}
-                        }else {
-                            timeObject = {[tempHour + ":" + tempMinute + " - " + (tempHour + 1) + ":" + "00"]: dentist.dentists}
-                        }
-                        dentist.availability[i][date].push(timeObject)
-                    }else {
-                        tempMinute = parseInt(tempMinute) + 30
-                        //check if hour needs to be added
-                        if (tempMinute === 60) {
-                            tempMinute = '00'
-                            tempHour += 1
-                        }
-                        //create ending hours and minutes for the timeslots, always 30 minutes
-                        var endHour = tempHour
-                        var endMinute = parseInt(tempMinute) + 30
+                let timeArray = this.createTimeslot(newHours, dateObj.getDay())
+                let availability = dentist.availability[i][date]
+                dentist.availability[i] = ({[date]: timeArray})
 
-                        if (endMinute === 60) {
-                            endMinute = '00'
-                            endHour += 1
-                        }
-
-                        dentist.availability[i][date].push({[tempHour + ':' + tempMinute + ' - ' + endHour + ':' + endMinute]: dentist.dentists})
+                for(let j = 0; j<availability.length; j++){
+                    let time = Object.keys(availability[j])[0]
+                    if (dentist.availability[i][date][j] !== undefined) {
+                        dentist.availability[i][date][j][time] = availability[j][time]
                     }
                 }
-                console.log(dentist.availability[i][date])
-
             }
         }
+        dentist.openinghours[day] = newHours.openinghours[day]
+        storageController.saveAvailability(dentist, dentist.id)
     }
-
 }
 module.exports.TimeSlotCreator = TimeSlotCreator
