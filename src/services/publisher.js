@@ -6,7 +6,6 @@ class Publisher {
     constructor() {
     }
     publishTimeSlots(file) {
-
         fs.readFile(file, (err, data) => {
             const clinic = data.toString('utf-8');
             let clinicId = JSON.parse(clinic).id;
@@ -20,6 +19,10 @@ class Publisher {
         delete booking.hourPos
         console.log(booking)
         MQTT.publish(variables.BOOKING_RESPONSE_TOPIC, JSON.stringify(booking), {qos:2})
+    }
+
+    publishAvailabilityForDate(date, data) {
+            MQTT.publish(variables.AVAILABILITY_DATE_TOPIC + '/' + date, data, {retain:true});
     }
 }
 module.exports.Publisher = Publisher;
