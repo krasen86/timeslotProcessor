@@ -6,52 +6,26 @@ class TimeSlotController {
     }
     checkAvailability(message) {
         let booking = JSON.parse(message);
+
         const file = "./availability-data/availability-" + booking.dentistid + ".json";
         const bookingHour = booking.time.split(" ")[1];
         const bookingDate = booking.time.split(" ")[0];
 
         return new Promise((resolve) => {
-
             fs.readFile (file, (err, data) => {
-                const availability = JSON.parse(data)
-                let flag = false;
-                let i = 0;
-                let date = "";
+                const clinicAvailabilityArray = JSON.parse(data).availability
+                let dateObject = clinicAvailabilityArray.find(obj => obj.date === bookingDate);
 
-                while (!flag) {
-                    if(availability.availability[i] === undefined) {
-                        break;
+                booking.available = false;
+
+                if (dateObject !== undefined) {
+                    // finds the time Object that corresponds to the booking time
+                    let timeObject = dateObject.timeslots.find( obj => obj.time.split(" -")[0] === bookingHour )
+
+                    // checks for available time slots at booking time
+                    if (timeObject !== undefined && timeObject.availableDentists > 0) {
+                        booking.available = true;
                     }
-                    if (availability.availability[i].hasOwnProperty(bookingDate)) {
-                        date = availability.availability[i];
-                        flag = true;
-                    } else {
-                        i++
-                    }
-                }
-                if(flag) {
-
-                    for (let j = 0; j < date[bookingDate].length; j++) {
-                        var hour = (Object.keys(date[bookingDate][j])[0]).split(" -")[0]
-
-                        if (hour === bookingHour) {
-                            const hourKey = Object.keys(date[bookingDate][j])
-                            const availabilityKey = date[bookingDate][j][hourKey]
-
-                            if(availabilityKey > 0){
-                                booking.available = true;
-                                booking.datePos = i;
-                                booking.hourPos = j;
-                                break;
-                            }
-
-                        } else {
-                            booking.available = false;
-                        }
-                    }
-                }
-                if(!flag) {
-                    booking.available = false;
                 }
                 resolve(booking)
             })
