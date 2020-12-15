@@ -35,20 +35,24 @@ class TimeSlotController {
     takeTimeSlot(booking) {
         const storageController = new StorageController();
         const file = "./availability-data/availability-" + booking.dentistid + ".json";
+        const bookingHour = booking.time.split(" ")[1];
         const bookingDate = booking.time.split(" ")[0];
-
-        const datePos = booking.datePos;
-        const hourPos = booking.hourPos;
 
         fs.readFile (file, (err, data) => {
             const jsonFile = JSON.parse(data)
-            const hour = Object.keys(jsonFile.availability[datePos][bookingDate][hourPos])
-            let availability = jsonFile.availability[datePos][bookingDate][hourPos][hour]
+            const availabilityArray = jsonFile.availability
+            let dateObject = availabilityArray.find(obj => obj.date === bookingDate);
 
-            availability--
-            jsonFile.availability[datePos][bookingDate][hourPos][hour] = availability;
+            if (dateObject !== undefined) {
+                // finds the time Object that corresponds to the booking time
+                let timeObject = dateObject.timeslots.find( obj => obj.time.split(" -")[0] === bookingHour )
 
-            storageController.saveAvailability(jsonFile, booking.dentistid)
+                // checks for available time slots at booking time
+                if (timeObject !== undefined ) {
+                    timeObject.availableDentists--;
+                    storageController.saveAvailability(jsonFile, booking.dentistid);
+                }
+            }
         })
     }
 }
