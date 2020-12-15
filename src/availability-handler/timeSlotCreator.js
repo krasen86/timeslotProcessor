@@ -115,12 +115,10 @@ class TimeSlotCreator {
                 dentist.availability[i] = ({[date]: timeArray})
                 for(let j = 0; j<availability.length; j++){
                     for(let x = 0; x<dentist.availability[i][date].length; x++){
-                        console.log("ok")
                         let time = Object.keys(availability[j])[0]
                         let oldTime = Object.keys(dentist.availability[i][date][x])[0]
                         if (dentist.availability[i][date][x] !== undefined && time === oldTime) {
                             dentist.availability[i][date][x][time] = availability[j][time]
-                            console.log(dentist.availability[i][date])
                         }
                     }
                 }
