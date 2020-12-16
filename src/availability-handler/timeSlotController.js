@@ -22,7 +22,7 @@ class TimeSlotController {
                     // finds the time Object that corresponds to the booking time
                     let timeObject = dateObject.timeslots.find( obj => obj.time.split(" -")[0] === bookingHour )
 
-                    // checks for available time slots at booking time
+                    // Only when timeObject has available dentist then set booking.availability to true
                     if (timeObject !== undefined && timeObject.availableDentists > 0) {
                         booking.available = true;
                     }

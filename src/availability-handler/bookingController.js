@@ -15,9 +15,7 @@ class BookingController {
             }
             publisher.publishBookingConfirmation(result)
         }
-
         timeSlotAvailable();
-
     }
 }
 module.exports.BookingController = BookingController
