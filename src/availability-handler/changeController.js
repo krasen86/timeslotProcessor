@@ -35,14 +35,15 @@ class ChangeController {
             let difference = dentists.dentists - existingDentists.dentists
             if(difference !== 0) {
                 existingDentists.dentists = dentists.dentists;
-                for(let i = 0; i<existingDentists.availability.length; i++) {
-                    let dateKey = Object.keys(existingDentists.availability[i])[0]
-                    for(let j = 0; j< existingDentists.availability[i][dateKey].length; j++) {
-                        let timeSlotKey = Object.keys(existingDentists.availability[i][dateKey][j])[0]
+
+                // goes through every date object in availability array
+                for(let i = 0; i < existingDentists.availability.length; i++) {
+                    // goes through every timeslot object in a date
+                    for(let j = 0; j< existingDentists.availability[i].timeslots.length; j++) {
                         if(difference < 0){
-                            existingDentists.availability[i][dateKey][j][timeSlotKey] -= Math.abs(difference)
+                            existingDentists.availability[i].timeslots[j].availableDentists -= Math.abs(difference)
                         }else {
-                            existingDentists.availability[i][dateKey][j][timeSlotKey] += difference
+                            existingDentists.availability[i].timeslots[j].availableDentists += difference
                         }
                     }
                 }

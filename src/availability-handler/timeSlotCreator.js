@@ -6,7 +6,7 @@ class TimeSlotCreator {
     }
 
     createTimeslot(clinic, day) {
-        const timeArray = []
+        const timeslotArray = []
 
         //get openinghours depending on day
         if (day === Variables.MONDAY) {
@@ -50,7 +50,11 @@ class TimeSlotCreator {
 
             for (var i=0; i<timeSlots; i++){
                 if(i === 0) {
-                    timeArray.push({[startHour + ':' + tempMinute + ' - ' + (startHour) + ':' + (parseInt(tempMinute+30))]: clinic.dentists})
+                    timeslotArray.push({
+                        "time": startHour + ':' + tempMinute + ' - ' + (startHour) + ':' + (parseInt(tempMinute + 30)),
+                        "availableDentists": clinic.dentists
+                    })
+                   // timeArray.push({[startHour + ':' + tempMinute + ' - ' + (startHour) + ':' + (parseInt(tempMinute+30))]: clinic.dentists})
                 } else {
                     tempMinute = parseInt(tempMinute) + 30
         //check if hour needs to be added
@@ -67,10 +71,14 @@ class TimeSlotCreator {
                         endHour += 1
                     }
         //push the timeslot for every iteration to the array, with the amount of dentists the clinic has
-                    timeArray.push({[tempHour + ':' + tempMinute + ' - ' + endHour + ':' +endMinute]: clinic.dentists})
+                    timeslotArray.push({
+                        "time": tempHour + ':' + tempMinute + ' - ' + endHour + ':' + endMinute,
+                        "availableDentists": clinic.dentists
+                    })
+                    //timeArray.push({[tempHour + ':' + tempMinute + ' - ' + endHour + ':' + endMinute]: clinic.dentists})
                 }
             }
-        return timeArray;
+        return timeslotArray;
 
     }
 
@@ -92,11 +100,14 @@ class TimeSlotCreator {
             var day = repeats.getDay()
 
             //check if day is saturday or sunday
-            if(day != 6 && day != 0) {
-                clinic.availability.push({[date]: this.createTimeslot(clinic, day)})
+            if(day !== 6 && day !== 0) {
+                clinic.availability.push({
+                    "date": date,
+                    "timeslots": this.createTimeslot(clinic, day)
+                })
             }
         }
-        //console.log(JSON.stringify(clinic,null, " "))
+        // console.log(JSON.stringify(clinic,null, " "))
         storageController.saveClinic(clinic)
     }
 
@@ -113,11 +124,13 @@ class TimeSlotCreator {
                 let timeArray = this.createTimeslot(newHours, dateObj.getDay())
                 let availability = dentist.availability[i][date]
                 dentist.availability[i] = ({[date]: timeArray})
-
                 for(let j = 0; j<availability.length; j++){
-                    let time = Object.keys(availability[j])[0]
-                    if (dentist.availability[i][date][j] !== undefined) {
-                        dentist.availability[i][date][j][time] = availability[j][time]
+                    for(let x = 0; x<dentist.availability[i][date].length; x++){
+                        let time = Object.keys(availability[j])[0]
+                        let oldTime = Object.keys(dentist.availability[i][date][x])[0]
+                        if (dentist.availability[i][date][x] !== undefined && time === oldTime) {
+                            dentist.availability[i][date][x][time] = availability[j][time]
+                        }
                     }
                 }
             }
