@@ -24,28 +24,25 @@ class AvailabilityDateController {
 
     }
 
-    /*availabilityDate/2020-12-10
-        {
-        “Id1”: true,
-        “Id2”: true,av
-        “Id3”: false
-        }
-    */
-
     getAvailabilityForAllClinicsForDate(clinicsNumber, date) {
         return new Promise ((resolve) => {
             let response = {};
             for (let i = 1; i <= clinicsNumber; i++) {
-                let isAvailable =  this.getAvailabilityForClinicForDate(i, date);
-                isAvailable.then(res => {
-                    response["Id"+ i] = res;
-                    console.log(response);
-                }).catch(err => {
-                    console.log(err);
+                let availabilityForClinic =  new Promise ((resolve2) => {
+                    let isAvailable = this.getAvailabilityForClinicForDate(i, date);
+                    isAvailable.then(res => {
+                        resolve2(res);
+                    }).catch(err => {
+                        console.log(err);
+                    })
+                })
+                availabilityForClinic.then( res => {
+                    response["Id" + i] = res;
+                    if (Object.keys(response).length === clinicsNumber) {
+                        resolve(response);
+                    }
                 })
             }
-
-            resolve(response);
         })
     }
 
