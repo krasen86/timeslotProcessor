@@ -100,5 +100,32 @@ class TimeSlotCreator {
         storageController.saveClinic(clinic)
     }
 
+    updateTimeslots(dentist, day, newHours) {
+        const storageController = new StorageController();
+
+        for(let i = 0; i<dentist.availability.length; i++) {
+
+            let date = Object.keys(dentist.availability[i])[0]
+            let dateObj = Date.parse(date)
+            dateObj = new Date(dateObj)
+
+            if (dateObj.toLocaleString('en-us', {weekday: 'long'}).toLowerCase() === day) {
+                let timeArray = this.createTimeslot(newHours, dateObj.getDay())
+                let availability = dentist.availability[i][date]
+                dentist.availability[i] = ({[date]: timeArray})
+                for(let j = 0; j<availability.length; j++){
+                    for(let x = 0; x<dentist.availability[i][date].length; x++){
+                        let time = Object.keys(availability[j])[0]
+                        let oldTime = Object.keys(dentist.availability[i][date][x])[0]
+                        if (dentist.availability[i][date][x] !== undefined && time === oldTime) {
+                            dentist.availability[i][date][x][time] = availability[j][time]
+                        }
+                    }
+                }
+            }
+        }
+        dentist.openinghours[day] = newHours.openinghours[day]
+        storageController.saveAvailability(dentist, dentist.id)
+    }
 }
 module.exports.TimeSlotCreator = TimeSlotCreator
