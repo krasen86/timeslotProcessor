@@ -7,64 +7,60 @@ class AvailabilityDateController {
     }
 
     initiateAvailabilityPerDay() {
-
         const availabilityDir = './availability-data/';
-        let clinicsNumber = 3;
-        let date = '2020-12-17';
-        // fs.readdir(availabilityDir, (err, files) => {
-        //     return files.length
-        // })
+        let clinicsNumber = fs.readdirSync(availabilityDir).length;
+        var dateObj = new Date(Date.now())
+        let availabilityObject = {}
 
-        let response = this.getAvailabilityForAllClinicsForDate(clinicsNumber, date);
+        for(var j = 0; j<365; j++) {
 
-        response.then(res => {
-            console.log('final response: ' + JSON.stringify(res));
-            this.publisher.publishAvailabilityForDate(date, JSON.stringify(res));
-        })
+            var repeatDate = dateObj.setDate(dateObj.getDate() + 1)
+            var repeats = new Date(repeatDate)
 
+            var date = repeats.toISOString().split('T')[0]
+
+            var weekDay = repeats.getDay()
+
+            //check if day is saturday or sunday
+            if(weekDay !== 6 && weekDay !== 0) {
+                 availabilityObject = this.getAvailabilityForAllClinicsForDate(clinicsNumber, date);
+            } else {
+                availabilityObject =  this.getUnavailableForAllClinics(3)
+            }
+            this.publisher.publishAvailabilityForDate(date, JSON.stringify(availabilityObject));
+        }
+    }
+
+    getUnavailableForAllClinics(clinicsNumber){
+        let response = {};
+        for (let i = 1; i <= clinicsNumber; i++) {
+            response["id" + i] = false;
+        }
+        return response
     }
 
     getAvailabilityForAllClinicsForDate(clinicsNumber, date) {
-        return new Promise ((resolve) => {
-            let response = {};
-            for (let i = 1; i <= clinicsNumber; i++) {
-                let availabilityForClinic =  new Promise ((resolve2) => {
-                    let isAvailable = this.getAvailabilityForClinicForDate(i, date);
-                    isAvailable.then(res => {
-                        resolve2(res);
-                    }).catch(err => {
-                        console.log(err);
-                    })
-                })
-                availabilityForClinic.then( res => {
-                    response["Id" + i] = res;
-                    if (Object.keys(response).length === clinicsNumber) {
-                        resolve(response);
-                    }
-                })
-            }
-        })
+        let response = {};
+        for (let i = 1; i <= clinicsNumber; i++) {
+            response["id" + i] = this.getAvailabilityForClinicForDate(i, date);
+        }
+        return response
     }
 
     getAvailabilityForClinicForDate(clinicId, date) {
-        let fileName = './availability-data/availability-' + clinicId +'.json'
+        let fileName = './availability-data/availability-' + clinicId + '.json'
         try {
-            return new Promise((resolve) => {
-                fs.readFile(fileName, (err, data) => {
-                    let availabilityArray = JSON.parse(data).availability;
-
-                    let dateObject = availabilityArray.find(obj => obj.date === date);
-                    let response = dateObject.timeslots.some((timeSlot) => {
-                        return timeSlot.availableDentists >= 1;
-                    })
-
-                    console.log('getAvailabilityForClinicForDate: ' + response);
-                    resolve(response.toString());
-                })
+            let data = fs.readFileSync(fileName);
+            let availabilityArray = JSON.parse(data).availability;
+            let dateObject = availabilityArray.find(obj => obj.date === date);
+            let response = dateObject.timeslots.some((timeSlot) => {
+                return timeSlot.availableDentists >= 1;
             })
-        } catch(err) {
+            return response
+        } catch (err) {
             console.error(err);
         }
     }
 }
+
 module.exports.AvailabilityDateController = AvailabilityDateController
