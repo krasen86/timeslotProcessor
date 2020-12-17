@@ -2,7 +2,7 @@ const {MQTT} = require("./services/mqttConnector");
 const {Subscriber} = require("./services/subscriber");
 const variables = require("./config/variables");
 const {BrokerListener} = require("./services/brokerListener");
-const {AvailabilityDateController} = require("./availabilityDate-handler/availabilityDateController");
+const {TimeslotDateInitiator} = require("./availabilityDate-handler/timeslotDateInitiator");
 
 MQTT.on('connect', function () {
    let subscriber = new Subscriber();
@@ -11,6 +11,6 @@ MQTT.on('connect', function () {
    subscriber.subscribeToTopic(variables.BOOKING_TOPIC)
    let listener = new BrokerListener();
    listener.listenForMessage();
-   let availabilityDateController = new AvailabilityDateController();
+   let availabilityDateController = new TimeslotDateInitiator();
    availabilityDateController.initiateAvailabilityPerDay();
 })
