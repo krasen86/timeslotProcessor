@@ -24,6 +24,7 @@ class TimeslotDateData {
         let fileName = './availability-data/availability-' + clinicId + '.json'
         try {
             let data = fs.readFileSync(fileName);
+            console.log('availability file read')
             let availabilityArray = JSON.parse(data).availability;
             let dateObject = availabilityArray.find(obj => obj.date === date);
             let response = dateObject.timeslots.some((timeSlot) => {

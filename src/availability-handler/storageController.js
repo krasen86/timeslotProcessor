@@ -26,6 +26,7 @@ class StorageController {
 
         fs.readFile(fileName, () => {
             fs.writeFileSync(fileName, JSON.stringify(availability));
+            console.log('booking saved ')
         })
     }
 }

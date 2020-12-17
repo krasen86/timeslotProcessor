@@ -42,8 +42,8 @@ class TimeSlotController {
             const jsonFile = JSON.parse(data)
             const availabilityArray = jsonFile.availability
             let dateObject = availabilityArray.find(obj => obj.date === bookingDate);
-
             if (dateObject !== undefined) {
+
                 // finds the time Object that corresponds to the booking time
                 let timeObject = dateObject.timeslots.find( obj => obj.time.split(" -")[0] === bookingHour )
 

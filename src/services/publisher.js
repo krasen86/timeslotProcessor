@@ -11,7 +11,7 @@ class Publisher {
             let clinicId = JSON.parse(clinic).id;
             let availability = JSON.parse(clinic).availability
 
-            MQTT.publish(variables.AVAILABILITY_TOPIC + "/" + clinicId, JSON.stringify(availability), {retain:true});
+            MQTT.publish(variables.AVAILABILITY_TOPIC + "/" + clinicId, JSON.stringify(availability), {retain:true, qos: 1});
         })
     }
     publishBookingConfirmation(booking) {
@@ -22,7 +22,7 @@ class Publisher {
     }
 
     publishAvailabilityForDate(date, data) {
-            MQTT.publish(variables.AVAILABILITY_DATE_TOPIC + '/' + date, data, {retain:true});
+            MQTT.publish(variables.AVAILABILITY_DATE_TOPIC + '/' + date, data, {retain:true, qos:0});
     }
 }
 module.exports.Publisher = Publisher;
