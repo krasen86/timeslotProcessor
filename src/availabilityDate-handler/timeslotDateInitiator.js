@@ -27,7 +27,7 @@ class TimeslotDateInitiator {
             if(weekDay !== 6 && weekDay !== 0) {
                  availabilityObject = this.timeslotDateData.getAvailabilityForAllClinicsForDate(clinicsNumber, date);
             } else {
-                availabilityObject =  this.timeslotDateData.getUnavailableForAllClinics(3)
+                availabilityObject =  this.timeslotDateData.getUnavailableForAllClinics(clinicsNumber);
             }
             this.publisher.publishAvailabilityForDate(date, JSON.stringify(availabilityObject));
         }
