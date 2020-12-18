@@ -11,17 +11,17 @@ class TimeslotDateInitiator {
     initiateAvailabilityPerDay() {
         const availabilityDir = './availability-data/';
         let clinicsNumber = fs.readdirSync(availabilityDir).length;
-        var dateObj = new Date(Date.now())
+        let dateObj = new Date(Date.now())
         let availabilityObject = {}
 
-        for(var j = 0; j<365; j++) {
+        for(let i = 0; i<365; i++) {
 
-            var repeatDate = dateObj.setDate(dateObj.getDate() + 1)
-            var repeats = new Date(repeatDate)
+            let repeatDate = dateObj.setDate(dateObj.getDate() + 1);
+            let repeats = new Date(repeatDate)
 
-            var date = repeats.toISOString().split('T')[0]
+            let date = repeats.toISOString().split('T')[0];
 
-            var weekDay = repeats.getDay()
+            let weekDay = repeats.getDay();
 
             //check if day is saturday or sunday
             if(weekDay !== 6 && weekDay !== 0) {
