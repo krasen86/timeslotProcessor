@@ -2,6 +2,7 @@ const fs = require("fs");
 const {Watcher} = require("../services/watcher");
 const {Publisher} = require("../services/publisher");
 const {TimeSlotCreator} = require("./timeSlotCreator");
+const {TimeslotDateInitiator} = require("../availabilityDate-handler/timeslotDateInitiator")
 
 class ChangeController {
     constructor() {
@@ -9,6 +10,8 @@ class ChangeController {
     checkChange(message) {
         const dentists = JSON.parse(message).dentists
         const timeSlotCreator = new TimeSlotCreator()
+        const availabilityDateController = new TimeslotDateInitiator();
+
         const publisher = new Publisher()
         const watcher = new Watcher()
 
@@ -24,13 +27,16 @@ class ChangeController {
                 } else {
                     timeSlotCreator.populateAvailability(dentists[i-1])
                 }
+                if (i === dentists.length){
+                    availabilityDateController.initiateAvailabilityPerDay()
+                }
             } catch(err) {
                 console.error(err)
             }
         }
     }
     checkDentistCount(dentists, fileName) {
-        fs.readFile (fileName, (err, data) => {
+            let data = fs.readFileSync(fileName);
             let existingDentists = JSON.parse(data);
             let difference = dentists.dentists - existingDentists.dentists
             if(difference !== 0) {
@@ -49,11 +55,10 @@ class ChangeController {
                 }
             }
             fs.writeFileSync(fileName, JSON.stringify(existingDentists));
-        })
     }
     checkDentistOpeningHours(dentist, fileName) {
         const timeSlotCreator = new TimeSlotCreator();
-        fs.readFile(fileName, (err, data) => {
+        let data = fs.readFileSync(fileName);
             let oldDentist = JSON.parse(data);
 
             for(let day in oldDentist.openinghours) {
@@ -61,7 +66,6 @@ class ChangeController {
                     timeSlotCreator.updateTimeslots(oldDentist, day, dentist)
                 }
             }
-        })
     }
 }
 module.exports.ChangeController = ChangeController

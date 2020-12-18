@@ -4,6 +4,7 @@ const fs = require("fs")
 class TimeSlotController {
     constructor() {
     }
+
     checkAvailability(message) {
         let booking = JSON.parse(message);
 
@@ -12,7 +13,7 @@ class TimeSlotController {
         const bookingDate = booking.time.split(" ")[0];
 
         return new Promise((resolve) => {
-            fs.readFile (file, (err, data) => {
+            fs.readFile(file, (err, data) => {
                 const clinicAvailabilityArray = JSON.parse(data).availability
                 let dateObject = clinicAvailabilityArray.find(obj => obj.date === bookingDate);
 
@@ -20,14 +21,14 @@ class TimeSlotController {
 
                 if (dateObject !== undefined) {
                     // finds the time Object that corresponds to the booking time
-                    let timeObject = dateObject.timeslots.find( obj => obj.time.split(" -")[0] === bookingHour )
+                    let timeObject = dateObject.timeslots.find(obj => obj.time.split(" -")[0] === bookingHour);
 
                     // Only when timeObject has available dentist then set booking.availability to true
                     if (timeObject !== undefined && timeObject.availableDentists > 0) {
                         booking.available = true;
                     }
                 }
-                resolve(booking)
+                resolve(booking);
             })
         })
     }
@@ -38,22 +39,22 @@ class TimeSlotController {
         const bookingHour = booking.time.split(" ")[1];
         const bookingDate = booking.time.split(" ")[0];
 
-        fs.readFile (file, (err, data) => {
-            const jsonFile = JSON.parse(data)
-            const availabilityArray = jsonFile.availability
-            let dateObject = availabilityArray.find(obj => obj.date === bookingDate);
+        let data = fs.readFileSync(file);
+        const jsonFile = JSON.parse(data);
+        const availabilityArray = jsonFile.availability;
+        let dateObject = availabilityArray.find(obj => obj.date === bookingDate);
+        if (dateObject !== undefined) {
 
-            if (dateObject !== undefined) {
-                // finds the time Object that corresponds to the booking time
-                let timeObject = dateObject.timeslots.find( obj => obj.time.split(" -")[0] === bookingHour )
+            // finds the time Object that corresponds to the booking time
+            let timeObject = dateObject.timeslots.find(obj => obj.time.split(" -")[0] === bookingHour);
 
-                // checks for available time slots at booking time
-                if (timeObject !== undefined ) {
-                    timeObject.availableDentists--;
-                    storageController.saveAvailability(jsonFile, booking.dentistid);
-                }
+            // checks for available time slots at booking time
+            if (timeObject !== undefined) {
+                timeObject.availableDentists--;
+                storageController.saveAvailability(jsonFile, booking.dentistid);
             }
-        })
+        }
     }
 }
+
 module.exports.TimeSlotController = TimeSlotController
