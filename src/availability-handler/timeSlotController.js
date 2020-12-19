@@ -12,25 +12,22 @@ class TimeSlotController {
         const bookingHour = booking.time.split(" ")[1];
         const bookingDate = booking.time.split(" ")[0];
 
-        return new Promise((resolve) => {
-            fs.readFile(file, (err, data) => {
-                const clinicAvailabilityArray = JSON.parse(data).availability
-                let dateObject = clinicAvailabilityArray.find(obj => obj.date === bookingDate);
 
-                booking.available = false;
+        let data = fs.readFileSync(file)
+        const clinicAvailabilityArray = JSON.parse(data).availability
+        let dateObject = clinicAvailabilityArray.find(obj => obj.date === bookingDate);
+        booking.available = false;
 
-                if (dateObject !== undefined) {
-                    // finds the time Object that corresponds to the booking time
-                    let timeObject = dateObject.timeslots.find(obj => obj.time.split(" -")[0] === bookingHour);
+        if (dateObject !== undefined) {
+            // finds the time Object that corresponds to the booking time
+            let timeObject = dateObject.timeslots.find(obj => obj.time.split(" -")[0] === bookingHour);
 
-                    // Only when timeObject has available dentist then set booking.availability to true
-                    if (timeObject !== undefined && timeObject.availableDentists > 0) {
-                        booking.available = true;
-                    }
-                }
-                resolve(booking);
-            })
-        })
+            // Only when timeObject has available dentist then set booking.availability to true
+            if (timeObject !== undefined && timeObject.availableDentists > 0) {
+                booking.available = true;
+            }
+        }
+        return (booking);
     }
 
     takeTimeSlot(booking) {

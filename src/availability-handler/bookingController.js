@@ -10,16 +10,14 @@ class BookingController {
     }
     processMessage(message) {
         const timeSlotController = new TimeSlotController();
-        let _this = this;
-        async function timeSlotAvailable() {
-            const result = await timeSlotController.checkAvailability(message);
-            if(result.available === true) {
-                timeSlotController.takeTimeSlot(result);
-                _this.updateAvailabilityForDate(result);
-            }
-            _this.publisher.publishBookingConfirmation(result);
+
+        let availabilityResponse = timeSlotController.checkAvailability(message);
+        if (availabilityResponse.available === true) {
+            timeSlotController.takeTimeSlot(availabilityResponse);
+            this.updateAvailabilityForDate(availabilityResponse);
         }
-        timeSlotAvailable();
+        this.publisher.publishBookingConfirmation(availabilityResponse);
+
     }
 
     updateAvailabilityForDate(booking) {
