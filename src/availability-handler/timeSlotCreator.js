@@ -127,26 +127,31 @@ class TimeSlotCreator {
 
     updateTimeslots(dentist, day, newHours) {
         const storageController = new StorageController();
-        for(let i = 0; i<dentist.availability.length; i++) {
 
+        // goes through availability array before any changes are made
+        for(let i = 0; i<dentist.availability.length; i++) {
             let date = dentist.availability[i].date;
             let dateObj = Date.parse(date);
             dateObj = new Date(dateObj);
 
+            // make changes when the current availability object (availability[i]) is a weekday of where the opening hours change
             if (dateObj.toLocaleString('en-us', {weekday: 'long'}).toLowerCase() === day) {
-                let timeArray = this.createTimeslot(newHours, dateObj.getDay());
-                let availability = dentist.availability[i];
+                let newTimeslotArray = this.createTimeslot(newHours, dateObj.getDay())
+                let oldTimeslotArray = dentist.availability[i].timeslots
+                // update the timeslot array of the availability object according to the new opening hours
                 dentist.availability[i] = ({
                     "date": date,
-                    "timeslots": timeArray
-                });
-                for(let j = 0; j<availability.timeslots.length; j++){
-                    for(let x = 0; x<dentist.availability[i].timeslots.length; x++){
-                        let time = availability.timeslots[j].time;
-                        let oldTime = dentist.availability[i].timeslots[x].time;
-                        if (dentist.availability[i].timeslots[x].time !== undefined && time === oldTime) {
-                            dentist.availability[i].timeslots[x].availableDentists = availability.timeslots[j].availableDentists;
-                        }
+                    "timeslots": newTimeslotArray
+                })
+
+                // goes through the old timeslot array to update the available dentist to the value before the update
+                for(let j = 0; j < oldTimeslotArray.length; j++){
+                    let time = oldTimeslotArray[j].time;
+                    let newTimeObject = dentist.availability[i].timeslots.find(obj => obj.time === time)
+
+                    // only update the objects that exist in the update version. When opening hours are longer then the old opening hours keep the existing amount of dentist in the clinic.
+                    if (newTimeObject !== undefined){
+                        newTimeObject.availableDentists = oldTimeslotArray[j].availableDentists
                     }
                 }
             }
