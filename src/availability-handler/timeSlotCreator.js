@@ -46,6 +46,8 @@ class TimeSlotCreator {
 
             let tempHour = startHour;
             let tempMinute = startMinute;
+            let startHalfHour = start.split(':')[1]
+            let closeHalfHour = close.split(':')[1]
 
         //for loop pushes to timearray on first iteration with only adding +30 minutes to endtime of timeslot
         //iterate as many times as there are supposed to be timeslots
@@ -79,6 +81,17 @@ class TimeSlotCreator {
                     });
                     //timeArray.push({[tempHour + ':' + tempMinute + ' - ' + endHour + ':' + endMinute]: clinic.dentists})
                 }
+            }
+            if (startHalfHour === '30') {
+                timeslotArray.splice(0,1)
+            }
+            if (closeHalfHour === '30'){
+                tempHour += 1
+                tempMinute = '00'
+                timeslotArray.push({
+                    "time": tempHour + ':' + tempMinute + ' - ' + endHour + ':' + (parseInt(endMinute + 30)),
+                    "availableDentists": clinic.dentists
+                })
             }
         return timeslotArray;
 
