@@ -22,7 +22,7 @@ class Publisher {
         delete booking.datePos
         delete booking.hourPos
         console.log(booking)
-        MQTT.publish(variables.BOOKING_RESPONSE_TOPIC, JSON.stringify(booking), {qos: 2})
+        MQTT.publish(variables.BOOKING_RESPONSE_TOPIC, JSON.stringify(booking), {qos: 1})
     }
 
     publishAvailabilityForDate(date, data) {
