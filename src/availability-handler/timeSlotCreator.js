@@ -49,6 +49,25 @@ class TimeSlotCreator {
             let startHalfHour = start.split(':')[1]
             let closeHalfHour = close.split(':')[1]
 
+        // When starting hour equals ending hour, e.g. 9:00-9:30 push to timeslotArray and return its value
+        // In case closing hour is not half an hour later this does not get executed (e.g. getting from
+        // the API something wrong such as 9:00-9:00 or even 9:00-9:15 etc)
+        if (timeSlots === 0 && closeHalfHour === '30') {
+            if (startHalfHour === '00') {
+                timeslotArray.push({
+                    "time": start + ' - ' + close,
+                    "availableDentists": clinic.dentists
+                });
+                return timeslotArray;
+            } else {
+                // In case of e.g. 9:30-9:30 it returns "9:00 - undefined:NaN", thus we return empty timeslotArray instead
+                return timeslotArray;
+            }
+        } else if (timeSlots < 0) {
+            // In case of error input time slots e.g. 10:00-9:00 resulted to undefined:NaN
+            return timeslotArray;
+        }
+
         //for loop pushes to timearray on first iteration with only adding +30 minutes to endtime of timeslot
         //iterate as many times as there are supposed to be timeslots
 
