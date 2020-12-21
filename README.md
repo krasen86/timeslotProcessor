@@ -2,7 +2,7 @@
 
 ## Link to main documentation repository
 
-- [Documentation repositoy](https://git.chalmers.se/courses/dit355/2020/group-2/documentation)
+- [Documentation repository](https://git.chalmers.se/courses/dit355/2020/group-2/documentation)
 
 ## Project setup
 
