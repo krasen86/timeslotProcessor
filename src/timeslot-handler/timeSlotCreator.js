@@ -1,5 +1,5 @@
 const Variables = require("../config/variables");
-const {StorageController} = require("./storageController");
+const {ClinicDataStore} = require("./clinicDataStore");
 
 class TimeSlotCreator {
     constructor() {
@@ -115,7 +115,7 @@ class TimeSlotCreator {
 
     populateAvailability(message) {
         const clinic = message;
-        const storageController = new StorageController();
+        const clinicDataStore = new ClinicDataStore();
 
         clinic.availability = [];
 
@@ -138,13 +138,14 @@ class TimeSlotCreator {
                 });
             }
         }
-        storageController.saveClinic(clinic);
+        clinicDataStore.saveClinic(clinic);
     }
 
     updateTimeslots(dentist, day, newHours) {
         const storageController = new StorageController();
 
         // goes through availability array before any changes are made
+        const clinicDataStore = new ClinicDataStore();
         for(let i = 0; i<dentist.availability.length; i++) {
             let date = dentist.availability[i].date;
             let dateObj = Date.parse(date);
@@ -173,7 +174,7 @@ class TimeSlotCreator {
             }
         }
         dentist.openinghours[day] = newHours.openinghours[day];
-        storageController.saveAvailability(dentist, dentist.id);
+        clinicDataStore.saveAvailability(dentist, dentist.id);
     }
 }
 module.exports.TimeSlotCreator = TimeSlotCreator

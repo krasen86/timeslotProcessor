@@ -1,7 +1,7 @@
-const {StorageController} = require("./storageController")
+const {ClinicDataStore} = require("./clinicDataStore")
 const fs = require("fs")
 
-class TimeSlotController {
+class TimeSlotProcessor {
     constructor() {
     }
 
@@ -31,7 +31,7 @@ class TimeSlotController {
     }
 
     takeTimeSlot(booking) {
-        const storageController = new StorageController();
+        const clinicDataStore = new ClinicDataStore();
         const file = "./availability-data/availability-" + booking.dentistid + ".json";
         const bookingHour = booking.time.split(" ")[1];
         const bookingDate = booking.time.split(" ")[0];
@@ -48,10 +48,10 @@ class TimeSlotController {
             // checks for available time slots at booking time
             if (timeObject !== undefined) {
                 timeObject.availableDentists--;
-                storageController.saveAvailability(jsonFile, booking.dentistid);
+                clinicDataStore.saveAvailability(jsonFile, booking.dentistid);
             }
         }
     }
 }
 
-module.exports.TimeSlotController = TimeSlotController
+module.exports.TimeSlotProcessor = TimeSlotProcessor

@@ -1,6 +1,6 @@
 const fs = require("fs");
 
-class TimeslotDateData {
+class TimeSlotPerDateDataProcessor {
     constructor() {
     }
 
@@ -36,4 +36,4 @@ class TimeslotDateData {
     }
 }
 
-module.exports.TimeslotDateData = TimeslotDateData
+module.exports.TimeSlotPerDateDataProcessor = TimeSlotPerDateDataProcessor

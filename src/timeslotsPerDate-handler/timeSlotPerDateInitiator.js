@@ -1,11 +1,11 @@
 const fs = require("fs");
 const {Publisher} = require("../services/publisher")
-const {TimeslotDateData} = require("./timeslotDateData")
+const {TimeSlotPerDateDataProcessor} = require("./timeSlotPerDateDataProcessor")
 
-class TimeslotDateInitiator {
+class TimeSlotPerDateInitiator {
     constructor() {
         this.publisher = new Publisher();
-        this.timeslotDateData = new TimeslotDateData();
+        this.timeSlotPerDateDataProcessor = new TimeSlotPerDateDataProcessor();
     }
 
     initiateAvailabilityPerDay() {
@@ -25,13 +25,13 @@ class TimeslotDateInitiator {
 
             //check if day is saturday or sunday
             if(weekDay !== 6 && weekDay !== 0) {
-                 availabilityObject = this.timeslotDateData.getAvailabilityForAllClinicsForDate(clinicsNumber, date);
+                 availabilityObject = this.timeSlotPerDateDataProcessor.getAvailabilityForAllClinicsForDate(clinicsNumber, date);
             } else {
-                availabilityObject =  this.timeslotDateData.getUnavailableForAllClinics(clinicsNumber);
+                availabilityObject =  this.timeSlotPerDateDataProcessor.getUnavailableForAllClinics(clinicsNumber);
             }
             this.publisher.publishAvailabilityForDate(date, JSON.stringify(availabilityObject));
         }
     }
 }
 
-module.exports.TimeslotDateInitiator = TimeslotDateInitiator
+module.exports.TimeSlotPerDateInitiator = TimeSlotPerDateInitiator

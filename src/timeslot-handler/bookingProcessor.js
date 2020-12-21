@@ -1,19 +1,18 @@
 const fs = require("fs");
-const {TimeSlotController} = require("./timeSlotController");
-const {TimeslotDateData} = require("../availabilityDate-handler/timeslotDateData");
+const {TimeSlotProcessor} = require("./timeSlotProcessor");
+const {TimeSlotPerDateDataProcessor} = require("../timeslotsPerDate-handler/timeSlotPerDateDataProcessor");
 const {Publisher} = require ("../services/publisher");
 
-class BookingController {
+class BookingProcessor {
     constructor() {
-        this.timeslotDateData = new TimeslotDateData();
         this.publisher = new Publisher();
     }
     processMessage(message) {
-        const timeSlotController = new TimeSlotController();
+        const timeSlotProcessor = new TimeSlotProcessor();
 
-        let availabilityResponse = timeSlotController.checkAvailability(message);
+        let availabilityResponse = timeSlotProcessor.checkAvailability(message);
         if (availabilityResponse.available === true) {
-            timeSlotController.takeTimeSlot(availabilityResponse);
+            timeSlotProcessor.takeTimeSlot(availabilityResponse);
             this.updateAvailabilityForDate(availabilityResponse);
         }
         this.publisher.publishBookingConfirmation(availabilityResponse);
@@ -21,16 +20,17 @@ class BookingController {
     }
 
     updateAvailabilityForDate(booking) {
+        const timeSlotPerDateDataProcessor = new TimeSlotPerDateDataProcessor();
         const availabilityDir = './availability-data/';
         let clinicsNumber = fs.readdirSync(availabilityDir).length;
         let date = booking.time.split(' ')[0];
-        let availability =  this.timeslotDateData.getAvailabilityForClinicForDate(booking.dentistid, date);
+        let availability =  timeSlotPerDateDataProcessor.getAvailabilityForClinicForDate(booking.dentistid, date);
 
         // when the last timeslot of clinic for a date has been taken it should check the availability for the other clinics for that date ans republish the current availability status
         if (!availability) {
-            let availabilityForDate = this.timeslotDateData.getAvailabilityForAllClinicsForDate(clinicsNumber, date);
+            let availabilityForDate = timeSlotPerDateDataProcessor.getAvailabilityForAllClinicsForDate(clinicsNumber, date);
             this.publisher.publishAvailabilityForDate(date, JSON.stringify(availabilityForDate));
         }
     }
 }
-module.exports.BookingController = BookingController
+module.exports.BookingProcessor = BookingProcessor
