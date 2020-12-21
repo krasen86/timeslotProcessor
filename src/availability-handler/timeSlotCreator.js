@@ -63,9 +63,6 @@ class TimeSlotCreator {
                 // In case of e.g. 9:30-9:30 it returns "9:00 - undefined:NaN", thus we return empty timeslotArray instead
                 return timeslotArray;
             }
-        } else if (timeSlots < 0) {
-            // In case of error input time slots e.g. 10:00-9:00 resulted to undefined:NaN
-            return timeslotArray;
         }
 
         //for loop pushes to timearray on first iteration with only adding +30 minutes to endtime of timeslot
