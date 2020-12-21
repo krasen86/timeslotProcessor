@@ -3,7 +3,7 @@ const {Publisher} = require( "../services/publisher");
 const {Watcher} = require( "../services/watcher");
 
 
-class StorageController {
+class ClinicDataStore {
     constructor() {
     }
 
@@ -24,9 +24,11 @@ class StorageController {
     saveAvailability(availability, id) {
         let fileName = './availability-data/availability-' + id +'.json'
 
-        fs.readFile(fileName, () => {
+        if (fs.existsSync(fileName)) {
             fs.writeFileSync(fileName, JSON.stringify(availability));
-        })
+        } else {
+            console.log('Error: the file that was specified in order to save the available time slots does not exist.')
+        }
     }
 }
-module.exports.StorageController = StorageController
+module.exports.ClinicDataStore = ClinicDataStore
