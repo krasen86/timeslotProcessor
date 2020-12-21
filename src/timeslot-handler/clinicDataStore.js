@@ -3,7 +3,7 @@ const {Publisher} = require( "../services/publisher");
 const {Watcher} = require( "../services/watcher");
 
 
-class StorageController {
+class ClinicDataStore {
     constructor() {
     }
 
@@ -31,4 +31,4 @@ class StorageController {
         }
     }
 }
-module.exports.StorageController = StorageController
+module.exports.ClinicDataStore = ClinicDataStore

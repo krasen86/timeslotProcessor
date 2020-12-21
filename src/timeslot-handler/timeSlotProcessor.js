@@ -1,7 +1,7 @@
-const {StorageController} = require("./storageController")
+const {ClinicDataStore} = require("./clinicDataStore")
 const fs = require("fs")
 
-class TimeSlotController {
+class TimeSlotProcessor {
     constructor() {
     }
 
@@ -12,29 +12,26 @@ class TimeSlotController {
         const bookingHour = booking.time.split(" ")[1];
         const bookingDate = booking.time.split(" ")[0];
 
-        return new Promise((resolve) => {
-            fs.readFile(file, (err, data) => {
-                const clinicAvailabilityArray = JSON.parse(data).availability
-                let dateObject = clinicAvailabilityArray.find(obj => obj.date === bookingDate);
 
-                booking.available = false;
+        let data = fs.readFileSync(file)
+        const clinicAvailabilityArray = JSON.parse(data).availability
+        let dateObject = clinicAvailabilityArray.find(obj => obj.date === bookingDate);
+        booking.available = false;
 
-                if (dateObject !== undefined) {
-                    // finds the time Object that corresponds to the booking time
-                    let timeObject = dateObject.timeslots.find(obj => obj.time.split(" -")[0] === bookingHour);
+        if (dateObject !== undefined) {
+            // finds the time Object that corresponds to the booking time
+            let timeObject = dateObject.timeslots.find(obj => obj.time.split(" -")[0] === bookingHour);
 
-                    // Only when timeObject has available dentist then set booking.availability to true
-                    if (timeObject !== undefined && timeObject.availableDentists > 0) {
-                        booking.available = true;
-                    }
-                }
-                resolve(booking);
-            })
-        })
+            // Only when timeObject has available dentist then set booking.availability to true
+            if (timeObject !== undefined && timeObject.availableDentists > 0) {
+                booking.available = true;
+            }
+        }
+        return (booking);
     }
 
     takeTimeSlot(booking) {
-        const storageController = new StorageController();
+        const clinicDataStore = new ClinicDataStore();
         const file = "./availability-data/availability-" + booking.dentistid + ".json";
         const bookingHour = booking.time.split(" ")[1];
         const bookingDate = booking.time.split(" ")[0];
@@ -51,10 +48,10 @@ class TimeSlotController {
             // checks for available time slots at booking time
             if (timeObject !== undefined) {
                 timeObject.availableDentists--;
-                storageController.saveAvailability(jsonFile, booking.dentistid);
+                clinicDataStore.saveAvailability(jsonFile, booking.dentistid);
             }
         }
     }
 }
 
-module.exports.TimeSlotController = TimeSlotController
+module.exports.TimeSlotProcessor = TimeSlotProcessor

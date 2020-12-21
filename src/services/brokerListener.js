@@ -1,7 +1,7 @@
 const {MQTT} = require('./mqttConnector');
 const variables = require("../config/variables");
-const {AvailabilityController} = require("../availability-handler/availabilityController");
-const {BookingController} = require("../availability-handler/bookingController");
+const {TimeSlotController} = require("../timeslot-handler/timeSlotController");
+const {BookingProcessor} = require("../timeslot-handler/bookingProcessor");
 
 class BrokerListener {
     constructor() {
@@ -9,12 +9,12 @@ class BrokerListener {
     listenForMessage() {
         MQTT.on('message', function (topic, message) {
             if (topic === variables.DENTIST_TOPIC) {
-                const availabilityController = new AvailabilityController();
-                availabilityController.processMessage(message);
+                const timeSlotController = new TimeSlotController();
+                timeSlotController.processMessage(message);
             }
             if(topic === variables.BOOKING_TOPIC) {
-                const bookingController = new BookingController();
-                bookingController.processMessage(message);
+                const bookingProcessor = new BookingProcessor();
+                bookingProcessor.processMessage(message);
             }
         })
     }
