@@ -11,7 +11,7 @@ class BookingProcessor {
         const timeSlotProcessor = new TimeSlotProcessor();
 
         let availabilityResponse = timeSlotProcessor.checkAvailability(message);
-        if (availabilityResponse.available === true) {
+        if (availabilityResponse.available) {
             timeSlotProcessor.takeTimeSlot(availabilityResponse);
             this.updateAvailabilityForDate(availabilityResponse);
         }
