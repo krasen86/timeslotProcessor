@@ -11,10 +11,13 @@ class TimeSlotPerDateInitiator {
     initiateAvailabilityPerDay() {
         const availabilityDir = './availability-data/';
         let clinicsNumber = fs.readdirSync(availabilityDir).length;
-        let dateObj = new Date(Date.now())
-        let availabilityObject = {}
+        let dateObj = new Date(Date.now());
+        let availabilityObject = {};
 
-        for(let i = 0; i<365; i++) {
+        let clinicOneData =  fs.readFileSync('./availability-data/availability-1.json');
+        let availabilityDataLength = JSON.parse(clinicOneData).availability.length;
+
+        for(let i = 0; i < availabilityDataLength; i++) {
 
             let repeatDate = dateObj.setDate(dateObj.getDate() + 1);
             let repeats = new Date(repeatDate)
