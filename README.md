@@ -19,3 +19,7 @@ cd src
 node index.js
 ```
 
+## Diagrams
+
+### Low-level timeSlotProcessor component diagram
+![Component Diagram](documentation/Component diagram - TimeSlotProcessor v2.png)
